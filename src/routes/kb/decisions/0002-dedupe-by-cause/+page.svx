@@ -1,0 +1,68 @@
+---
+layout: runbook
+title: '0002 · Split #4471 and deduplicate by verified cause'
+owner: ldomzalski-allegro
+status: proposed
+reviewed: '2026-11-03'
+signature: 'ldomzalski-allegro / Codex / S01E03 / 2026-11-03'
+---
+
+<script>
+ import CauseTable from '#lib/kb/CauseTable.svelte';
+ import QueueTimeline from '#lib/kb/QueueTimeline.svelte';
+ import DedupeExplorer from '#lib/kb/DedupeExplorer.svelte';
+ import IncidentEvidence from '#lib/kb/IncidentEvidence.svelte';
+ import RenderStamp from '#lib/kb/RenderStamp.svelte';
+</script>
+
+## Decision and scope
+
+This new record proposes replacing [decision 0001](/kb/decisions/0001-dedupe-by-subject), not rewriting its accepted history. Its subject-only rule can merge different causes and separate the same cause. The [triage page](/kb/triage/dedupe) is stale; its age is visible in the shared layout. Do not treat its accepted label as current evidence.
+
+The [incident page](/kb/incidents/4471) says “one issue, one fix queued.” Its own rendered components contradict that claim. Split the reports by verified cause and track each fix independently. Neither queued status nor a corrected document proves a fix shipped.
+
+## What the data actually shows
+
+<CauseTable ticket={4471} />
+
+<IncidentEvidence />
+
+## Two independent fixes
+
+### Shared parser: day/month interpreted month/day
+
+Day-first tenants using the shared parser get swapped month and day. Example: R-41200, Harbour Dental, app: 7 April becomes 4 July. This group also includes app/email reports from booking-v3 tenants; the tenant's form alone does not identify the cause. See [parser ticket](https://github.com/ldomzalski-allegro/mega-s01e03-what-it-shows/issues/1).
+
+Make parsing respect the tenant's date convention or accept an unambiguous date representation. Test ambiguous dates in both directions, impossible dates, app and email paths, day-first locales and a month-first control. This is a proposed fix, not an implemented one.
+
+### booking-v3: wrong date-format hint
+
+For a day-first tenant, booking-v3 prints MM/DD/YYYY while the form interprets input in the tenant's order. A person following that hint can therefore enter the wrong date even after the shared parser is fixed. See [form-hint ticket](https://github.com/ldomzalski-allegro/mega-s01e03-what-it-shows/issues/2).
+
+Generate the hint and input parsing convention from the same tenant locale. Test Alder Physio, Copper Studio and Pale Harbour through the form, plus booking-v2 and app/email controls. Confirm what the user sees and the date actually saved.
+
+## No unsupported third cause
+
+The five reports listed in desk-notes.json describe one-day moves. They remain in the parser group under the exported tenant-based logic and must not be counted twice. Their wording deserves investigation but does not establish a timezone or daylight-saving root cause. Keep uncertainty explicit; create another cause only after reproducing it.
+
+## Received is not merged
+
+<QueueTimeline ticket={4471} />
+
+A spike in merging is not a spike in incoming failures. Track receivedAt and mergedAt separately. The product serves about 300k people, but this desk covers multiple products and the export has no affected-user denominator: do not infer a failure rate or put every report under sched-prod without evidence.
+
+## Replacement triage rule
+
+1. Deduplicate export rows by report id before counting. Equal ids are one report; matching subjects are not enough.
+2. Read the body and check tenant locale, tenant form, and channel. Use causeOf and sameCause; intakeTag and browserLocale are clues only.
+3. Merge only when the same verified cause applies. Keep independent causes in separate tickets even with identical subjects.
+4. Unknown tenant or unreproduced cause: retain for investigation, do not merge automatically.
+5. Keep report ids, counts, evidence and issue links auditable. Review new reports and re-render before relying on this snapshot.
+
+<DedupeExplorer />
+
+## Operations and review
+
+Support owns ongoing classification; engineering owns each independent fix and its regression tests. Revisit the live queue because the desk continues to receive reports. This export is a snapshot dated 4 October 2026, not a live API. Recompute counts from a new export and check for other products before expanding scope. Accept this replacement decision only after the desk reviews it; the historical accepted record remains unchanged.
+
+<RenderStamp {signature} />

@@ -1,0 +1,18 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {uniqueById,groupByCause,causeOf,sameCause} from '../src/lib/kb/causes.ts';
+import {deskRef} from '../src/lib/kb/desk-ref.ts';
+const base=new URL('../src/lib/data/',import.meta.url);
+const read=p=>JSON.parse(fs.readFileSync(new URL(p,base)));
+const reports=read('reports-4471.json');
+const tenants=Object.fromEntries(fs.readdirSync(new URL('tenants/',base)).map(f=>{const t=read('tenants/'+f);return [t.handle,t]}));
+const rows=uniqueById(reports).filter(r=>r.mergedInto===4471);
+const groups=groupByCause(rows,r=>tenants[r.tenant]);
+assert.equal(reports.length,427);assert.equal(rows.length,412);
+assert.deepEqual(Object.fromEntries(groups.map(g=>[g.cause,g.reports.length])),{parser:379,hint:33});
+assert.equal(causeOf({channel:'form'},undefined),null);
+assert.equal(sameCause({channel:'form'},tenants['alder.physio'],{channel:'app'},tenants['alder.physio']),false);
+assert.equal(sameCause({channel:'app'},tenants['kettle.books'],{channel:'email'},tenants['kettle.books']),true);
+fs.mkdirSync(new URL('../evidence/',import.meta.url),{recursive:true});
+for(const g of groups)fs.writeFileSync(new URL(`../evidence/${g.cause}-report-ids.txt`,import.meta.url),g.reports.map(r=>r.id).join('\n')+'\n');
+console.log(JSON.stringify({raw:reports.length,unique:rows.length,causes:groups.map(({cause,reports,taggedAs,tenants,firstSeen,lastSeen})=>({cause,count:reports.length,taggedAs,tenants,firstSeen,lastSeen})),deskRef:deskRef('ldomzalski-allegro / Codex / S01E03 / 2026-11-03')},null,2));
