@@ -1,4 +1,4 @@
-> CLOSED / SUPERSEDED: This issue is no longer a separate delivery problem. All five listed ids are included in issue #1 by their original parser intakeTag. Current active accounting is 371 parser-tagged + 41 hint-tagged = 412 unique reports. The historical investigation below does not add another group or assert an established cause.
+> CLOSED / SUPERSEDED: This issue is no longer a separate delivery problem. All five listed ids are included in issue #1 by the supplied desk causeOf model, with a diagnostic footnote. Current active accounting is 379 parser + 33 hint = 412 unique reports. The historical investigation below does not add another group or assert an established cause.
 
 ## Scope
 

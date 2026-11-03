@@ -1,21 +1,23 @@
 ## Scope and counting basis
 
-**371 unique reports** originally labelled `parser` in `meta.intakeTag`, all merged into support ticket #4471. Membership is based only on the original intake label after deduplication by id. It is not the result of `causeOf` and is not a claim that every report has a reproduced common cause.
+**379 unique reports** merged into support ticket #4471, assigned to `parser` by the supplied desk cause model. Deduplicate by id, look up tenant locale and form, then call causeOf with the report channel. Do not group by original intakeTag or subject.
 
-## Problem represented by this label
+## Problem and evidence
 
-The shared parser described in the export reads dates month first for day-first tenants. R-41200 reports 7 April becoming 4 July. Proposed remedy: align parsing with the tenant convention or use an unambiguous representation; test ambiguous dates, invalid dates and the affected entry paths.
+The shared parser reads month first for day-first tenants. R-41200, Harbour Dental, app: 7 April became 4 July. This group includes booking-v2 form reports and app/email reports, including those from booking-v3 tenants. The channel and tenant context, not form version alone, determine this cause.
 
-## Classification caveats
+## Proposed remedy and tests
 
-The original parser label appears on 356 reports computed as parser and 15 computed as hint by the supplied causeOf model. All five desk-noted atypical descriptions are included here; issue #3 is closed and does not contribute another count. Their descriptions are not proof of a shared timezone or invite-order cause. Investigate them without silently removing or double-counting them.
+Respect the tenant date convention or use an unambiguous representation. Test ambiguous pairs in both directions, invalid dates, affected app/email and booking-v2 paths and a month-first control. No service fix has been implemented.
 
-## Evidence and acceptance
+## Diagnostic caveats
 
-Complete membership and source bodies are in `src/lib/data/reports-4471.json`; the 371 deduplicated ids for this ticket are in `evidence/parser-report-ids.txt`. Run `npm run audit` to reproduce the grouping. Before claiming a fix, reproduce the relevant mechanism, resolve classification discrepancies and verify intended versus stored dates. No product fix has been implemented.
+The five desk-noted descriptions (R-41202, R-41209, R-41236, R-41344, R-41620) are counted here and footnoted, following the supplied CauseTable and readAs logic. Their unusual descriptions need investigation; no independently verified timezone or third cause is asserted. Issue #3 is closed and contributes no additional count.
 
-## Accounting and KB page
+Of these reports, 356 carry intakeTag parser and 23 carry intakeTag hint. Those labels are retained for provenance, not used as ticket counts.
 
-371 parser-tagged + 41 hint-tagged = 412 unique reports from 427 exported rows. The original source labels are unchanged. Computed-cause counts 379/33 are shown separately for comparison, not used for current issue membership. This replaces the previous 374/33/5 publication.
+## Accounting and reproducibility
 
-Signed source: `src/routes/kb/decisions/0002-dedupe-by-cause/+page.svx`. Rendered page: `build/kb/decisions/0002-dedupe-by-cause.html`. Export date: 4 October 2026, not a live queue.
+379 parser + 33 hint = 412 unique reports from 427 exported rows. Complete membership: evidence/parser-report-ids.txt. Run npm run audit to recompute from the unchanged source reports and tenant configurations. The earlier 371/41 delivery used intake labels and was rejected by the course: right problems, intake's numbers rather than the desk's view.
+
+Signed source: src/routes/kb/decisions/0002-dedupe-by-cause/+page.svx. Rendered page: build/kb/decisions/0002-dedupe-by-cause.html. Export snapshot: 4 October 2026, not a live feed.
