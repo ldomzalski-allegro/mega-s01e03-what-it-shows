@@ -1,3 +1,4 @@
+// Historical, superseded grouping from the previous delivery. Not used by the current page or audit.
 import { causeOf, uniqueById, type Report, type Tenant } from './causes.ts';
 
 export type Problem = 'parser' | 'hint' | 'time-anomaly' | 'unplaced';

@@ -1,3 +1,5 @@
+> CLOSED / SUPERSEDED: This issue is no longer a separate delivery problem. All five listed ids are included in issue #1 by their original parser intakeTag. Current active accounting is 371 parser-tagged + 41 hint-tagged = 412 unique reports. The historical investigation below does not add another group or assert an established cause.
+
 ## Scope
 
 **5 unique reports**, previously merged into support ticket #4471 and included in the parser ticket. They are now excluded from issue #1 and counted only here. The bodies describe temporal anomalies rather than month/day swaps. This is a separate problem investigation, not a verified common root cause.

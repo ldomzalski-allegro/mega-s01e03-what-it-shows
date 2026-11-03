@@ -1,27 +1,21 @@
-## Scope
+## Scope and counting basis
 
-**374 unique reports** merged into support ticket #4471. Cause: `parser`. Seen 2026-04-01 through 2026-10-04; 11 tenants.
+**371 unique reports** originally labelled `parser` in `meta.intakeTag`, all merged into support ticket #4471. Membership is based only on the original intake label after deduplication by id. It is not the result of `causeOf` and is not a claim that every report has a reproduced common cause.
 
-## Root cause
+## Problem represented by this label
 
-The shared parser reads dates month first for day-first tenants. App/email reports and booking-v2 form reports therefore swap month and day. booking-v3 tenants are also affected through app/email; do not select by tenant form alone.
+The shared parser described in the export reads dates month first for day-first tenants. R-41200 reports 7 April becoming 4 July. Proposed remedy: align parsing with the tenant convention or use an unambiguous representation; test ambiguous dates, invalid dates and the affected entry paths.
 
-Classification uses `uniqueById`, tenant locale and form, and report channel through `causeOf` in `src/lib/kb/causes.ts`. Intake tags are not verified causes. Of these 374 reports, 351 were tagged parser and 23 hint. The exported classifier's 379 parser reports included five desk-noted temporal anomalies; those five are explicitly excluded from this ticket because their bodies do not establish month/day swaps. See issue #3.
+## Classification caveats
 
-## Reproduction evidence
+The original parser label appears on 356 reports computed as parser and 15 computed as hint by the supplied causeOf model. All five desk-noted atypical descriptions are included here; issue #3 is closed and does not contribute another count. Their descriptions are not proof of a shared timezone or invite-order cause. Investigate them without silently removing or double-counting them.
 
-Report R-41200, tenant `harbour.dental`, channel `app`:
+## Evidence and acceptance
 
-> Our 7 April reminder went out on 4 July. Is this a joke. It is not April Fools where we are.
+Complete membership and source bodies are in `src/lib/data/reports-4471.json`; the 371 deduplicated ids for this ticket are in `evidence/parser-report-ids.txt`. Run `npm run audit` to reproduce the grouping. Before claiming a fix, reproduce the relevant mechanism, resolve classification discrepancies and verify intended versus stored dates. No product fix has been implemented.
 
-## Expected
+## Accounting and KB page
 
-The date saved and shown matches the date the person intended in the tenant's convention. Hints and parsing agree.
+371 parser-tagged + 41 hint-tagged = 412 unique reports from 427 exported rows. The original source labels are unchanged. Computed-cause counts 379/33 are shown separately for comparison, not used for current issue membership. This replaces the previous 374/33/5 publication.
 
-## Proposed fix and verification
-
-Make shared parsing tenant-locale-aware or use an unambiguous representation. Test 07/04 as 7 April for en-GB and 4 July for en-US, the inverse pair, invalid dates, and app/email paths. Verify all affected day-first tenants. This ticket covers month/day swaps only, not the five temporal anomalies. Do not include those five when verifying coverage of this fix.
-
-## Accounting and source
-
-427 export rows reduce to 412 unique report ids: 374 parser + 33 hint + 5 temporal anomalies. The five anomalies are tracked separately in issue #3, without asserting a shared root cause. Each id belongs to one group. Full membership: `evidence/parser-report-ids.txt`. Snapshot exported 4 October 2026; counts are not live. Rendered decision: `build/kb/decisions/0002-dedupe-by-cause.html`; source: `src/routes/kb/decisions/0002-dedupe-by-cause/+page.svx`. Run `npm run audit` to reproduce. No product fix has been implemented.
+Signed source: `src/routes/kb/decisions/0002-dedupe-by-cause/+page.svx`. Rendered page: `build/kb/decisions/0002-dedupe-by-cause.html`. Export date: 4 October 2026, not a live queue.

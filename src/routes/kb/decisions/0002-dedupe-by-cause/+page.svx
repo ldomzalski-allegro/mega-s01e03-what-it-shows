@@ -1,6 +1,6 @@
 ---
 layout: runbook
-title: '0002 · Split #4471 by observed problem; verify causes before merging'
+title: '0002 · Split #4471 using original intake labels'
 owner: ldomzalski-allegro
 status: proposed
 reviewed: '2026-11-03'
@@ -15,60 +15,50 @@ signature: 'ldomzalski-allegro / Codex / S01E03 / 2026-11-03'
  import RenderStamp from '#lib/kb/RenderStamp.svelte';
 </script>
 
-## Decision and scope
+## Scope and counting rule
 
-This new record proposes replacing [decision 0001](/kb/decisions/0001-dedupe-by-subject), not rewriting its accepted history. Its subject-only rule can merge different causes and separate the same cause. The [triage page](/kb/triage/dedupe) is stale; its age is visible in the shared layout. Do not treat its accepted label as current evidence.
+The current delivery uses each report's original **meta.intakeTag**, as requested by the human. Deduplicate by report id, then group the reports merged into #4471 by that unchanged label. Do not use causeOf to determine membership for this delivery. Original labels and computed causes are different sources of classification, not interchangeable diagnoses.
 
-The [incident page](/kb/incidents/4471) says “one issue, one fix queued.” Its own rendered components contradict that claim. Read the bodies as well as the classifier: split independently observed problems and verify causes before merging. Neither queued status nor a corrected document proves a fix shipped.
-
-## What the data actually shows
+The earlier three-ticket split has been superseded. Issue #3 is closed; its five reports are counted once, under their original parser label in #1. No source report or original tenant configuration has been edited.
 
 <IncidentEvidence />
 
-## Original export view, for comparison only
+## Two active tickets
+
+### Parser-tagged reports
+
+[Issue #1](https://github.com/ldomzalski-allegro/mega-s01e03-what-it-shows/issues/1) contains all reports originally labelled parser. A typical described problem is a day/month date being interpreted month/day: R-41200 says 7 April became 4 July. Its proposed remedy is locale-consistent parsing or an unambiguous date representation, with regression coverage for ambiguous dates, invalid dates and relevant entry paths.
+
+Membership follows the intake label, not an independent diagnosis. Some parser-tagged reports compute to hint in the exported model. The five desk-noted descriptions remain visible as diagnostic caveats: one-day shifts, different days in Lisbon and Toronto, and an invite said to arrive before booking. Their wording does not establish a common timezone or other third cause. A label alone does not prove that one parser fix will resolve every report.
+
+### Hint-tagged reports
+
+[Issue #2](https://github.com/ldomzalski-allegro/mega-s01e03-what-it-shows/issues/2) contains all reports originally labelled hint. The supplied code describes booking-v3 printing MM/DD/YYYY for day-first tenants while the form reads the tenant's date convention. Correct the hint and verify that the input example, accepted format and saved date agree.
+
+This original-label bucket is not limited to booking-v3 form reports: some hint-tagged reports compute to parser. Do not present every report in this ticket as a confirmed form-hint failure. Verify tenant locale, form, channel and reproduction evidence before implementing a fix.
+
+## Original computed-cause view: comparison, not ticket membership
 
 <CauseTable ticket={4471} />
 
-The table above is unchanged from the export. Its parser total includes the five conflicting descriptions now tracked separately, and its “no ticket of its own” label refers to the old desk snapshot, not our GitHub issues.
+The original component is preserved. Its totals are the results of causeOf, not the original intakeTag counts used by the current issues. Its “no ticket of its own” text refers to the original desk snapshot, not the current GitHub issues. This discrepancy is explicitly disclosed rather than changing the export to force agreement.
 
-## Separate tickets and proposed fixes
+## Why subject matching is insufficient
 
-### Shared parser: day/month interpreted month/day
+This proposed record does not rewrite accepted [decision 0001](/kb/decisions/0001-dedupe-by-subject). That record and the [triage page](/kb/triage/dedupe) merge on subject alone. The examples below show that identical subjects can have different modeled causes and different subjects can share a cause. Subject-only matching is not evidence of the same technical problem.
 
-Day-first tenants using the shared parser get swapped month and day. Example: R-41200, Harbour Dental, app: 7 April becomes 4 July. This group also includes app/email reports from booking-v3 tenants; the tenant's form alone does not identify the cause. See [parser ticket](https://github.com/ldomzalski-allegro/mega-s01e03-what-it-shows/issues/1).
+<DedupeExplorer />
 
-Make parsing respect the tenant's date convention or accept an unambiguous date representation. Test ambiguous dates in both directions, impossible dates, app and email paths, day-first locales and a month-first control. This is a proposed fix, not an implemented one.
-
-### booking-v3: wrong date-format hint
-
-For a day-first tenant, booking-v3 prints MM/DD/YYYY while the form interprets input in the tenant's order. A person following that hint can therefore enter the wrong date even after the shared parser is fixed. See [form-hint ticket](https://github.com/ldomzalski-allegro/mega-s01e03-what-it-shows/issues/2).
-
-Generate the hint and input parsing convention from the same tenant locale. Test Alder Physio, Copper Studio and Pale Harbour through the form, plus booking-v2 and app/email controls. Confirm what the user sees and the date actually saved.
-
-### Temporal anomalies: investigate separately
-
-The five reports listed in desk-notes.json are not evidence of month/day swaps. R-41202 and R-41620 describe a one-day shift; R-41209 says bookings in June are one day off; R-41344 gives different days for the same meeting in Lisbon and Toronto; R-41236 says an invite arrived before booking. See the separate [temporal-anomaly investigation](https://github.com/ldomzalski-allegro/mega-s01e03-what-it-shows/issues/3).
-
-They were initially included in our parser ticket solely because the exported causeOf function does not inspect their bodies. That was an unsupported merge. Remove them from that ticket and count them only in the investigation. The evidence does not yet establish a shared timezone, daylight-saving, delivery-order or other root cause. Capture the intended date, stored instant, tenant and viewer zones, raw invite and send/creation timestamps; reproduce each symptom before prescribing a fix. Split the investigation further if evidence establishes independent problems.
+For future triage, read the body and verify the entry path and tenant context. Keep the original intake label for provenance, but do not treat it as a verified cause. Record discrepancies and establish causes before merging unrelated reports or claiming a fix covers them. The current two-bucket publication tests the human-requested original-label grouping; it does not settle those discrepancies.
 
 ## Received is not merged
 
 <QueueTimeline ticket={4471} />
 
-A spike in merging is not a spike in incoming failures. Track receivedAt and mergedAt separately. The product serves about 300k people, but this desk covers multiple products and the export has no affected-user denominator: do not infer a failure rate or put every report under sched-prod without evidence.
+A batch of merges is not the start of an incident. Receipt dates begin in April and the snapshot ends on 4 October 2026; it does not prove reporting stopped afterwards. The desk covers multiple products. Do not infer a failure rate from the stated sched-prod population or assign every report to that product without evidence.
 
-## Replacement triage rule
+## Review and limitations
 
-1. Deduplicate export rows by report id before counting. Equal ids are one report; matching subjects are not enough.
-2. Read the body and check tenant locale, tenant form, and channel. Use causeOf and sameCause as classification aids, not proof of the diagnosis; intakeTag and browserLocale are clues only.
-3. Merge only when the same verified cause applies. Keep independent problems in separate tickets even with identical subjects.
-4. Unknown tenant, conflicting body or unreproduced cause: retain in a separate investigation, do not automatically merge it into a known cause.
-5. Keep report ids, counts, evidence and issue links auditable. Review new reports and re-render before relying on this snapshot.
-
-<DedupeExplorer />
-
-## Operations and review
-
-Support owns ongoing classification; engineering owns each independent fix and its regression tests. Revisit the live queue because the desk continues to receive reports. This export is a snapshot dated 4 October 2026, not a live API. Recompute counts from a new export and check for other products before expanding scope. Accept this replacement decision only after the desk reviews it; the historical accepted record remains unchanged.
+Support should review new reports and classification discrepancies; engineering should reproduce each mechanism and add targeted regression tests. This export contains no live queue, booking-service implementation or event trace sufficient to reproduce every unusual description. Neither a queued fix nor this page proves a product fix shipped. Recompute from a new snapshot before relying on these counts as current.
 
 <RenderStamp {signature} />
