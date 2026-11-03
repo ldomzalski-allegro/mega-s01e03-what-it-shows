@@ -24,4 +24,4 @@ Derive the hint from the same locale convention used by the form. Test ambiguous
 
 ## Accounting and source
 
-427 export rows reduce to 412 unique report ids: 379 parser + 33 hint. Each id belongs to one group. Full membership: `evidence/hint-report-ids.txt`. Snapshot exported 4 October 2026; counts are not live. Rendered decision: `build/kb/decisions/0002-dedupe-by-cause.html`; source: `src/routes/kb/decisions/0002-dedupe-by-cause/+page.svx`. Run `npm run audit` to reproduce. No product fix has been implemented.
+427 export rows reduce to 412 unique report ids: 374 parser + 33 hint + 5 temporal anomalies. The five anomalies are tracked separately in issue #3, without asserting a shared root cause. Each id belongs to one group. Full membership: `evidence/hint-report-ids.txt`. Snapshot exported 4 October 2026; counts are not live. Rendered decision: `build/kb/decisions/0002-dedupe-by-cause.html`; source: `src/routes/kb/decisions/0002-dedupe-by-cause/+page.svx`. Run `npm run audit` to reproduce. No product fix has been implemented.

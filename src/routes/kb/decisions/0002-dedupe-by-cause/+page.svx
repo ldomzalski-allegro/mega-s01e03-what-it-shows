@@ -1,6 +1,6 @@
 ---
 layout: runbook
-title: '0002 · Split #4471 and deduplicate by verified cause'
+title: '0002 · Split #4471 by observed problem; verify causes before merging'
 owner: ldomzalski-allegro
 status: proposed
 reviewed: '2026-11-03'
@@ -19,15 +19,19 @@ signature: 'ldomzalski-allegro / Codex / S01E03 / 2026-11-03'
 
 This new record proposes replacing [decision 0001](/kb/decisions/0001-dedupe-by-subject), not rewriting its accepted history. Its subject-only rule can merge different causes and separate the same cause. The [triage page](/kb/triage/dedupe) is stale; its age is visible in the shared layout. Do not treat its accepted label as current evidence.
 
-The [incident page](/kb/incidents/4471) says “one issue, one fix queued.” Its own rendered components contradict that claim. Split the reports by verified cause and track each fix independently. Neither queued status nor a corrected document proves a fix shipped.
+The [incident page](/kb/incidents/4471) says “one issue, one fix queued.” Its own rendered components contradict that claim. Read the bodies as well as the classifier: split independently observed problems and verify causes before merging. Neither queued status nor a corrected document proves a fix shipped.
 
 ## What the data actually shows
 
-<CauseTable ticket={4471} />
-
 <IncidentEvidence />
 
-## Two independent fixes
+## Original export view, for comparison only
+
+<CauseTable ticket={4471} />
+
+The table above is unchanged from the export. Its parser total includes the five conflicting descriptions now tracked separately, and its “no ticket of its own” label refers to the old desk snapshot, not our GitHub issues.
+
+## Separate tickets and proposed fixes
 
 ### Shared parser: day/month interpreted month/day
 
@@ -41,9 +45,11 @@ For a day-first tenant, booking-v3 prints MM/DD/YYYY while the form interprets i
 
 Generate the hint and input parsing convention from the same tenant locale. Test Alder Physio, Copper Studio and Pale Harbour through the form, plus booking-v2 and app/email controls. Confirm what the user sees and the date actually saved.
 
-## No unsupported third cause
+### Temporal anomalies: investigate separately
 
-The five reports listed in desk-notes.json describe one-day moves. They remain in the parser group under the exported tenant-based logic and must not be counted twice. Their wording deserves investigation but does not establish a timezone or daylight-saving root cause. Keep uncertainty explicit; create another cause only after reproducing it.
+The five reports listed in desk-notes.json are not evidence of month/day swaps. R-41202 and R-41620 describe a one-day shift; R-41209 says bookings in June are one day off; R-41344 gives different days for the same meeting in Lisbon and Toronto; R-41236 says an invite arrived before booking. See the separate [temporal-anomaly investigation](https://github.com/ldomzalski-allegro/mega-s01e03-what-it-shows/issues/3).
+
+They were initially included in our parser ticket solely because the exported causeOf function does not inspect their bodies. That was an unsupported merge. Remove them from that ticket and count them only in the investigation. The evidence does not yet establish a shared timezone, daylight-saving, delivery-order or other root cause. Capture the intended date, stored instant, tenant and viewer zones, raw invite and send/creation timestamps; reproduce each symptom before prescribing a fix. Split the investigation further if evidence establishes independent problems.
 
 ## Received is not merged
 
@@ -54,9 +60,9 @@ A spike in merging is not a spike in incoming failures. Track receivedAt and mer
 ## Replacement triage rule
 
 1. Deduplicate export rows by report id before counting. Equal ids are one report; matching subjects are not enough.
-2. Read the body and check tenant locale, tenant form, and channel. Use causeOf and sameCause; intakeTag and browserLocale are clues only.
-3. Merge only when the same verified cause applies. Keep independent causes in separate tickets even with identical subjects.
-4. Unknown tenant or unreproduced cause: retain for investigation, do not merge automatically.
+2. Read the body and check tenant locale, tenant form, and channel. Use causeOf and sameCause as classification aids, not proof of the diagnosis; intakeTag and browserLocale are clues only.
+3. Merge only when the same verified cause applies. Keep independent problems in separate tickets even with identical subjects.
+4. Unknown tenant, conflicting body or unreproduced cause: retain in a separate investigation, do not automatically merge it into a known cause.
 5. Keep report ids, counts, evidence and issue links auditable. Review new reports and re-render before relying on this snapshot.
 
 <DedupeExplorer />
