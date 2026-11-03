@@ -4,7 +4,7 @@ title: '0002 · Split #4471 by the desk cause model'
 owner: ldomzalski-allegro
 status: proposed
 reviewed: '2026-11-03'
-signature: 'ldomzalski-allegro / Codex / S01E03 / 2026-11-03'
+signature: 'v1.eyJzdWIiOiIzOTg3IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpYXQiOjE3OTM2OTk5MTUsImV4cCI6MTc5Mzc4NjMxNX0.VreTjuEHkprG4DhhIcBuSn2hsKUEguf4KhYERO721RU'
 ---
 
 <script>
