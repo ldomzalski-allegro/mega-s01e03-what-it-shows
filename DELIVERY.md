@@ -2,8 +2,8 @@
 
 Public repository: https://github.com/ldomzalski-allegro/mega-s01e03-what-it-shows
 
-- Issue #1: parser, 379 unique reports.
-- Issue #2: date-format hint, 33 unique reports.
+- Issue #1: parser, 379 unique reports; course outcome FIXED, closed as completed.
+- Issue #2: date-format hint, 33 unique reports; course outcome WON'T FIX (booking-v3 retired), closed as not planned.
 - Issue #3: closed, superseded; its five ids are counted under parser with a diagnostic footnote.
 - Counting: uniqueById, tenant locale/form lookup, causeOf on tenant context and report channel. No source data or labels changed.
 - Original intake labels give 371/41 and are shown for comparison only. The course confirmed the problems and rejected intake's counts in favor of the desk view.
@@ -13,4 +13,6 @@ Public repository: https://github.com/ldomzalski-allegro/mega-s01e03-what-it-sho
 - Reproduce on Node 24: npm ci, npm run audit, npm run build, npm run preview.
 - Serve the complete build with its assets and open /kb/decisions/0002-dedupe-by-cause.
 
-All original export files remain unchanged. Earlier intake-only and three-bucket helpers/lists are historical comparison material, not the current membership rule. No product fix or independent reproduction of all atypical descriptions is claimed. Counts reflect the 4 October 2026 export, not a live feed.
+All original export files remain unchanged. Earlier intake-only and three-bucket helpers/lists are historical comparison material, not the current membership rule. Engineering update: #4471 closed 5 October 2026. A parser fix and form retirement are reported by the course, not implemented or independently verified by this harness. Do not describe both as repaired bugs. Counts reflect the 4 October 2026 export, not a live feed.
+
+The later engineering update is recorded separately in src/lib/data/engineering-update.json with its course source. The original export files remain unchanged.

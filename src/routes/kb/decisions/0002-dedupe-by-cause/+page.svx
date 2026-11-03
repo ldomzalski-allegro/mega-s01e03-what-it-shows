@@ -45,6 +45,15 @@ Generate the hint and input convention from the same locale. Test the form at Al
 
 The original component and data are preserved. Its “no ticket of its own” label describes the exported desk snapshot, before our issue #2 existed. The displayed cause counts, including the footnote, are the basis of the current ticket memberships.
 
+## Engineering outcome after the export
+
+The [course engineering update](https://hq.mega.dev/challenges/what-it-shows#engineering-update) marks #4471 closed on **5 October 2026**, after the 4 October data snapshot.
+
+- **Parser — FIXED.** The desk reports `fix(dates): parse dd/mm for eu locales`. Close our issue #1 as **completed**.
+- **Hint — WON'T FIX.** The desk reports `booking-v3 form retired`. Close our issue #2 as **not planned**, not completed. The misleading hint was not repaired; its form was retired.
+
+These are the course desk's reported outcomes, not fixes implemented or independently tested by this harness. The report counts remain historical totals from the export. Closed reports must not be described as two repaired bugs. Issue #3 stays closed as a superseded investigation; its five ids remain counted once under parser.
+
 ## Replace subject-only deduplication
 
 This proposed record replaces the rule in accepted [decision 0001](/kb/decisions/0001-dedupe-by-subject) without rewriting its history. The [triage page](/kb/triage/dedupe) is stale; its accepted label does not establish that its subject-only rule remains correct. The [incident page](/kb/incidents/4471) says one issue and one fix, while its components reveal two causes.
@@ -65,6 +74,6 @@ A batch of merges is not an incident onset. Receipt dates begin in April and the
 
 ## Operations and limitations
 
-Support owns continued review of new reports and classification discrepancies. Engineering must reproduce the mechanisms, implement independent fixes and add regression tests. The export is not a live feed or a booking-service reproduction environment. Neither a queued fix nor this page establishes that a product fix shipped. Recompute from a new snapshot before relying on counts as current.
+Support owns continued review of new reports and classification discrepancies. The course desk's later engineering update reports a parser fix and retirement of the hint's form, as recorded above. This harness has not inspected the production patch or independently verified deployment. The export is not a live feed or a booking-service reproduction environment. Recompute from a new snapshot before relying on counts as current.
 
 <RenderStamp {signature} />

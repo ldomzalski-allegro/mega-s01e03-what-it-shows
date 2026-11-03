@@ -1,3 +1,9 @@
+## Resolution: FIXED — close as completed
+
+The course engineering update marks support ticket #4471 closed on 5 October 2026. Parser outcome: **FIXED**, `fix(dates): parse dd/mm for eu locales`. Source: https://hq.mega.dev/challenges/what-it-shows#engineering-update
+
+This issue is closed as completed on the basis of the desk's report. The harness did not implement the patch or independently verify production deployment. The 379 reports remain the historical total from the 4 October export.
+
 ## Scope and counting basis
 
 **379 unique reports** merged into support ticket #4471, assigned to `parser` by the supplied desk cause model. Deduplicate by id, look up tenant locale and form, then call causeOf with the report channel. Do not group by original intakeTag or subject.
@@ -8,7 +14,7 @@ The shared parser reads month first for day-first tenants. R-41200, Harbour Dent
 
 ## Proposed remedy and tests
 
-Respect the tenant date convention or use an unambiguous representation. Test ambiguous pairs in both directions, invalid dates, affected app/email and booking-v2 paths and a month-first control. No service fix has been implemented.
+Respect the tenant date convention or use an unambiguous representation. Test ambiguous pairs in both directions, invalid dates, affected app/email and booking-v2 paths and a month-first control. This harness did not implement a service fix; the later course engineering outcome is recorded above.
 
 ## Diagnostic caveats
 
